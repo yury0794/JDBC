@@ -1,4 +1,4 @@
-package kr.ac.sungkyul.bookmal.vo;
+package kr.ac.sungkyul.bookmall.vo;
 
 public class AuthorVo {
 	private Long no;

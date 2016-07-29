@@ -1,9 +1,11 @@
+package jdbc;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class JDBCTestInsert {
+public class JDBCTestDelete {
 
 	public static void main(String[] args) {
 		Connection conn = null;
@@ -21,10 +23,10 @@ public class JDBCTestInsert {
 			stmt = conn.createStatement();
 
 			// 4. SQL문 실행
-			String sql = "insert into author values(6, '맹자', null)";
+			String sql = "delete from author where no=5";
 			int count = stmt.executeUpdate(sql);
 
-			System.out.println(count + "개의 row가 입력되었습니다.");
+			System.out.println(count + "개의 row가 삭제되었습니다.");
 
 		} catch (ClassNotFoundException e) {
 			System.out.println("드라이버 로딩 실패" + e);
