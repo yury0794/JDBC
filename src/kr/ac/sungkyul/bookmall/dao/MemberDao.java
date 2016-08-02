@@ -9,15 +9,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import kr.ac.sungkyul.bookmall.vo.BookVo;
+import kr.ac.sungkyul.bookmall.vo.MemberVo;
 
-public class BookDao {
+public class MemberDao {
 
-	public int update(Long no, Integer status) {
+	public int insert(MemberVo vo) {
 		int count = 0;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		
+
 		try {
 			// 1. 드라이버 로딩
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -27,12 +27,15 @@ public class BookDao {
 			conn = DriverManager.getConnection(url, "skudb", "skudb");
 
 			// 3. statement 준비
-			String sql = "update book set status = ? where no = ?";
+			String sql = "insert into member values(seq_member.nextval, ?, ?, ?, ?, ?)";
 			pstmt = conn.prepareStatement(sql);
 
 			// 4. 바인딩
-			pstmt.setInt(1, status);
-			pstmt.setLong(2, no);
+			pstmt.setString(1, vo.getName());
+			pstmt.setString(2, vo.getPhone());
+			pstmt.setString(3, vo.getEmail());
+			pstmt.setString(4, vo.getPassword());
+			pstmt.setString(5, vo.getAddress());
 
 			// 5. query 실행
 			count = pstmt.executeUpdate();
@@ -58,63 +61,13 @@ public class BookDao {
 		return count;
 	}
 
-	public int insert(BookVo vo) {
-		int count = 0;
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		
-		try {
-			// 1. 드라이버 로딩
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-
-			// 2. 연결 얻어오기
-			String url = "jdbc:oracle:thin:@localhost:1521:xe";
-			conn = DriverManager.getConnection(url, "skudb", "skudb");
-
-			// 3. statement 준비
-			String sql = "insert into book values(seq_book.nextval, ?, ?, ?, ?, ?, ?)";
-			pstmt = conn.prepareStatement(sql);
-
-			// 4. 바인딩
-			pstmt.setString(1, vo.getTitle());
-			pstmt.setInt(2, vo.getRate());
-			pstmt.setInt(3, vo.getStatus());
-			pstmt.setInt(4, vo.getPrice());
-			pstmt.setLong(5, vo.getAuthorNo());
-			pstmt.setLong(6, vo.getCategoryNo());
-			
-
-			// 5. query 실행
-			count = pstmt.executeUpdate();
-
-		} catch (ClassNotFoundException e) {
-			System.out.println("드라이버 로딩 실패 :" + e);
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			try {
-				// 6. 자원정리
-				if (pstmt != null) {
-					pstmt.close();
-				}
-
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				System.out.println("error:" + e);
-			}
-		}
-		return count;
-	}
-
-	public List<BookVo> getList() {
-		List<BookVo> list = new ArrayList<BookVo>();
+	public List<MemberVo> getList() {
+		List<MemberVo> list = new ArrayList<MemberVo>();
 
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
-		
+
 		try {
 			// 1. 드라이버 로딩
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -127,25 +80,25 @@ public class BookDao {
 			stmt = conn.createStatement();
 
 			// 4. SQL문 실행
-			String sql = "select a.no, a.title, b.name, a.price, c.genre from book a, "
-					+ "author b, category c where a.author_no = b.no "
-					+ "and a.category_no = c.no order by a.no";
+			String sql = "select no, name, phone, email, password, address from member";
 			rs = stmt.executeQuery(sql);
 
 			// 5. 결과 처리
 			while (rs.next()) {
 				Long no = rs.getLong(1);
-				String title = rs.getString(2);
-				String authorName = rs.getString(3);
-				Integer price = rs.getInt(4);
-				String genre = rs.getString(5);				
+				String name = rs.getString(2);
+				String phone = rs.getString(3);
+				String email = rs.getString(4);
+				String password = rs.getString(5);
+				String address = rs.getString(6);
 
-				BookVo vo = new BookVo();
+				MemberVo vo = new MemberVo();
 				vo.setNo(no);
-				vo.setTitle(title);
-				vo.setAuthorName(authorName);
-				vo.setPrice(price);
-				vo.setGenre(genre);
+				vo.setName(name);
+				vo.setPhone(phone);
+				vo.setEmail(email);
+				vo.setPassword(password);
+				vo.setAddress(address);
 
 				list.add(vo);
 			}
@@ -173,4 +126,5 @@ public class BookDao {
 		}
 		return list;
 	}
+
 }

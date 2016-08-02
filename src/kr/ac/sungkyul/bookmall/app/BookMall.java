@@ -9,24 +9,26 @@ import kr.ac.sungkyul.bookmall.vo.BookVo;
 public class BookMall {
 
 	public static void main(String[] args) {
-		Scanner key = new Scanner(System.in);
+		Scanner scanner = new Scanner(System.in);
 		System.out.print("대여 하고 싶은 책의 번호를 입력하세요:");
-		long num = key.nextInt();
+		Long bookNo = scanner.nextLong();
 
 		BookDao dao = new BookDao();
-		dao.update(num, 1);
+		dao.update(bookNo, 1/* 대여중 */ );
 
 		System.out.println("*****도서 정보 출력하기******");
-		testBookDaoGetList();
-		key.close();
+		displayBookInfo();
+
+		scanner.close();
 	}
-	
-	public static void testBookDaoGetList() {
+
+	public static void displayBookInfo() {
 		BookDao dao = new BookDao();
 		List<BookVo> list = dao.getList();
 
 		for (BookVo vo : list) {
-			System.out.println(vo);
+			System.out.println("책제목:" + vo.getTitle() + ", " + "저자:" + vo.getAuthorName() + ", " + "대여유무:"
+					+ (vo.getStatus() == 0 ? "재고있음" : "대여중"));
 		}
 	}
 }
